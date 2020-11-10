@@ -20,13 +20,13 @@ my_transform=transforms.Compose([
     ])
 
 num_classes=2
-learning_rate=0.001
+learning_rate=0.0001
 batch_size=4
 num_epochs=100
 
 
-device =torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
+#device =torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print('Cuda Availability:',torch.cuda.is_available())
 
 class Wood_Plastic_Dataset(Dataset):
@@ -54,7 +54,7 @@ class Wood_Plastic_Dataset(Dataset):
         
         image=Image.fromarray(img)
         
-        
+    
         img_label=torch.tensor(self.DataFrame.iloc[index,1])
         
         
@@ -85,7 +85,7 @@ class Wood_Plastic_Dataset(Dataset):
     
 
             
-dataset=Wood_Plastic_Dataset('Desktop/wood&plasticNew.csv','Desktop/Wood&Plastic',transform= my_transform)
+dataset=Wood_Plastic_Dataset(os.path.join(os.path.dirname(__file__), 'wood&plasticNew.csv'),os.path.join(os.path.dirname(__file__), 'Wood_Plastic'),transform= my_transform)
 
 
 
@@ -174,7 +174,7 @@ class Alexnet(nn.Module):
         x=self.averagepooling(x)
             
         x=torch.flatten(x,1)
-            
+
         x=self.FullyConnected(x)
             
         return x
@@ -191,26 +191,40 @@ num_total_steps=len(train_dataloader)
 
 # ----------Training Loop(uncommenet to train)---------------
 
-# for epoch in range(num_epochs):
+for epoch in range(num_epochs):
     
-#     for i,(images,labels)in enumerate(train_dataloader):
+     for i,(images,labels)in enumerate(train_dataloader):
         
-#         images=images.to(device)
+         images=images.to(device)
     
-#         labels=labels.to(device)
+         labels=labels.to(device)
         
-#         output=model(images)
+         output=model(images)
         
-#         loss=criterion(output,labels)
+         loss=criterion(output,labels)
        
-#         optimizer.zero_grad ()
+         optimizer.zero_grad ()
         
-#         loss.backward()
+         loss.backward()
          
-#         optimizer.step()
+         optimizer.step()
         
         
-#         if (i+1)%2==0:
-#             print(f'epoch:{epoch+1}/{num_epochs},step:{i+1}/{num_total_steps},loss:{loss.item()}')
+         if (i+1)%2==0:
+             print(f'epoch:{epoch+1}/{num_epochs},step:{i+1}/{num_total_steps},loss:{loss.item()}')
             
         
+#----------Testing---------
+
+
+correct = 0
+total = 0
+with torch.no_grad():
+    for data in test_dataloader:
+        images, labels = data[0].to(device), data[1].to(device)
+        outputs = model(images)
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+print('Accuracy: %d %%' %(100 * correct / total))
