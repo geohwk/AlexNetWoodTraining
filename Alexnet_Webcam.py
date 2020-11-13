@@ -33,7 +33,7 @@ batch_size=4
 num_epochs=1
 
 
-device =torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 print('Cuda Availability:',torch.cuda.is_available())
 
@@ -93,7 +93,7 @@ class Wood_Plastic_Dataset(Dataset):
     
 
             
-dataset=Wood_Plastic_Dataset('Desktop/wood&plasticNew.csv','Desktop/Wood&Plastic',transform= my_transform)
+dataset=Wood_Plastic_Dataset(os.path.dirname(__file__), 'wood&plasticNew.csv'),os.path.join(os.path.dirname(__file__), 'Wood_Plastic'),transform= my_transform)
 
 
 
