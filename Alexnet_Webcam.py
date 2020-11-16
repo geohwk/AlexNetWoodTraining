@@ -93,7 +93,7 @@ class Wood_Plastic_Dataset(Dataset):
     
 
             
-dataset=Wood_Plastic_Dataset(os.path.dirname(__file__), 'wood&plasticNew.csv'),os.path.join(os.path.dirname(__file__), 'Wood_Plastic'),transform= my_transform)
+dataset=Wood_Plastic_Dataset(os.path.join(os.path.dirname(__file__), 'wood&plasticNew.csv'),os.path.join(os.path.dirname(__file__), 'Wood_Plastic'),transform= my_transform)
 
 
 
