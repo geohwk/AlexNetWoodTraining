@@ -25,7 +25,7 @@ trainTransforms = transforms.Compose([Resize((224, 224)),ToTensor(),Normalize([0
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # Hyperparameters
-num_classes = 2
+num_classes = 3
 learning_rate = 0.0001
 batch_size = 4
 num_epochs = 5
@@ -40,7 +40,7 @@ class Identity(nn.Module):
 
 model = torchvision.models.alexnet(pretrained = True)                                           # Load pretrain model & modify it
 
-model.classifier[6] = torch.nn.Linear(model.classifier[6].in_features, 2)                       #Edits last layer to only output 2 classes, wood and plastic
+model.classifier[6] = torch.nn.Linear(model.classifier[6].in_features, 3)                       #Edits last layer to only output 2 classes, wood and plastic
 
 model.to(device)
 
@@ -107,3 +107,21 @@ def check_accuracy(loader, model):
     model.train()
 
 check_accuracy(test_loader, model)
+
+
+single_Dataset = ImageFolder(root = os.path.join(root_dir, 'singleimage'),transform= trainTransforms)
+
+single_loader = DataLoader(dataset=single_Dataset, batch_size=1, shuffle=True)
+
+
+for x, y in single_loader:
+    x = x.to(device=device)
+    scores = model(x)
+    _, predictions = scores.max(1)
+    if predictions == 0:
+        print("Random Image")
+    elif predictions == 1:
+        print("Plastic")
+    elif predictions == 2:
+        print("Wood")
+
